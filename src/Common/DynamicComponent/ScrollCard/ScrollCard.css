@@ -1,0 +1,103 @@
+.card {
+    flex: 0 0 330px;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    padding: 16px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-decoration: none;
+    color: inherit; 
+    transition: transform 0.2s;
+    cursor: pointer;
+  }
+  
+  .card-icon {
+    font-size: 32px;
+    color: #6b7280;
+    margin-right: 16px;
+  }
+  
+  .card-content {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .card-title {
+    font-size: 14px;
+    color: #6b7280;
+    margin: 0;
+  }
+  
+  .card-value {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 4px 0 0 0;
+  }
+  
+  .card-value.blue {
+    color: #2563eb;
+  }
+  
+  .card-value.green {
+    color: #16a34a;
+  }
+  
+  .card-value.orange {
+    color: #f97316;
+  }
+  
+  .card-value.purple {
+    color: #7c3aed;
+  }
+  
+  .card-value.yellow {
+    color: #fbbf24;
+  }
+  
+  .card-value.red {
+    color: #ef4444;
+  }
+  
+
+  .app-container {
+    display: flex;
+    justify-content:center;
+    align-items: center; 
+    min-height: 90vh;
+    background-color: #f3f4f6;
+    overflow: hidden; 
+  }
+  
+  .scroll-container {
+    display: flex;
+    gap: 15px; 
+    overflow-x: auto; 
+    padding: 20px 0px; 
+    max-width: 100%; 
+    width: 100%; 
+    scroll-snap-type: x mandatory; 
+    box-sizing: border-box; 
+     
+  }
+  
+  
+  .scroll-container > div {
+    flex-shrink: 0;
+    scroll-snap-align: start;
+    height: 70px;
+  
+  }
+  
+  
+  .scroll-container::-webkit-scrollbar {
+    display: none; 
+  }
+  
+  .scroll-container {
+    -ms-overflow-style: none; 
+    scrollbar-width: none;
+  }
+  
