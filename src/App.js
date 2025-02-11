@@ -1,17 +1,18 @@
-import Button from "./Common/DynamicComponents/Button/Button"; // Import the Button component
 import React from "react";
+import DynamicTabs from "./Common/DynamicComponent/Tabs/Tabs";
 
-function App() {
+const App = () => {
+  
+  const tabNames = ["Home", "Profile", "Settings", "NewTab","new1"];
+  const hometab = ["Home", "Profile", "Settings"];
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <h1 className="text-2xl font-bold mb-4">Dynamic Button with Hover</h1>
-
-      {/* Different buttons with hover effects */}
-      <Button text="Primary" color="blue" onClick={() => alert("Primary Button Clicked!")} />
-      <Button text="Success" color="green" onClick={() => alert("Success Button Clicked!")} />
-      <Button text="Danger" color="red" onClick={() => alert("Danger Button Clicked!")} />
+    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+      
+      <DynamicTabs tabNames={tabNames} />
+      <DynamicTabs tabNames={hometab} />
     </div>
   );
-}
+};
 
 export default App;
