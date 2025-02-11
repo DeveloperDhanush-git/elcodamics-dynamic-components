@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 
 const AgTable = ({ headers, data }) => {
+  
+
   const [searchFilters, setSearchFilters] = useState(
     Object.fromEntries(headers.map((header) => [header.key, ""]))
   );
