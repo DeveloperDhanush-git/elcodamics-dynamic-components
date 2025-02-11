@@ -3,11 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@handsontable/react": "^15.0.1",
     "cra-template": "1.2.0",
+    "formula-parser": "^2.0.1",
+    "handsontable": "^15.0.1",
+    "hot-formula-parser": "^4.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-excel-renderer": "^1.1.0",
+    "react-handsontable": "^0.3.2",
+    "react-icons": "^5.4.0",
     "react-scripts": "5.0.1",
-    "web-vitals": "^4.2.4"
+    "web-vitals": "^4.2.4",
+    "xlsx": "^0.18.5"
   },
   "scripts": {
     "start": "react-scripts start",
