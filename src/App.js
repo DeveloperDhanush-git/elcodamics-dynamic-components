@@ -1,15 +1,42 @@
-import Button from "./Common/DynamicComponents/Button/Button"; // Import the Button component
-import React from "react";
+import CustomerEditForm from "./Common/DynamicComponent/CustomerForm/EditCustomer";
+import LeadEntryForm from "./Common/DynamicComponent/CustomerForm/LeadEntry";
+import CustomerFeedbackForm from "./Common/DynamicComponent/CustomerForm/Feedback";
 
 function App() {
+  const formData = {
+    customerEdit: {
+      name: "",
+      contact: "",
+      email: "",
+      address: "",
+      gst: "",
+      businessType: "",
+      status: "",
+    },
+    leadEntry: {
+      leadName: "",
+      contactPerson: "",
+      phone: "",
+      email: "",
+      source: "",
+      status: "",
+      notes: "",
+    },
+    customerFeedback: {
+      customerName: "",
+      issueCategory: "",
+      details: "",
+      status: "",
+    },
+  };
+  
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <h1 className="text-2xl font-bold mb-4">Dynamic Button with Hover</h1>
+    <div className="container mx-auto p-4 space-y-6"style={{ fontFamily: "Montserrat, sans-serif" }}>
 
-      {/* Different buttons with hover effects */}
-      <Button text="Primary" color="blue" onClick={() => alert("Primary Button Clicked!")} />
-      <Button text="Success" color="green" onClick={() => alert("Success Button Clicked!")} />
-      <Button text="Danger" color="red" onClick={() => alert("Danger Button Clicked!")} />
+      <CustomerEditForm initialValues={formData.customerEdit} />
+<LeadEntryForm initialValues={formData.leadEntry} />
+<CustomerFeedbackForm initialValues={formData.customerFeedback} />
+
     </div>
   );
 }
