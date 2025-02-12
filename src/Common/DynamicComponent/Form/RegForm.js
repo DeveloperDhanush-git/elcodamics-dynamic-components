@@ -1,35 +1,15 @@
 import React from "react";
 import DynamicForm from "./DynamicFields";
+import { Typography } from "@mui/material";
 
 const formFields = [
-  { name: "fullName", label: "Full Name", type: "text", validation: { required: true } },
-  { name: "email", label: "Email", type: "email", validation: { required: true } },
-  { name: "password", label: "Password", type: "password", validation: { required: true } },
-  {
-    name: "gender",
-    label: "Gender",
-    type: "radio",
-    options: [
-      { label: "Male", value: "male" },
-      { label: "Female", value: "female" },
-      { label: "Other", value: "other" },
-    ],
-    validation: { required: true },
-  },
-  {
-    name: "country",
-    label: "Country",
-    type: "select",
-    options: [
-      { label: "Please Select", value: "" },
-      { label: "United States", value: "us" },
-      { label: "Canada", value: "canada" },
-      { label: "United Kingdom", value: "uk" },
-    ],
-    validation: { required: true },
-  },
-  { name: "profilePicture", label: "Profile Picture", type: "file", validation: { required: false } },
-  { name: "bio", label: "Short Bio", type: "text", validation: { required: false } },
+  { name: "firstName", label: "First Name", type: "text", validation: { required: true } },
+  { name: "lastName", label: "Last Name", type: "text", validation: { required: true } },
+  { name: "email", label: "Email Address", type: "text", validation: { required: true } },
+  { name: "company", label: "Company", type: "text", validation: { required: false } },
+  { name: "physicalAddress", label: "Physical Address", type: "text", validation: { required: false } },
+  { name: "dob", label: "Date of Birth", type: "date", validation: { required: true } },
+
 ];
 
 const RegForm = () => {
@@ -37,7 +17,14 @@ const RegForm = () => {
     alert(JSON.stringify(values, null, 2));
   };
 
-  return <DynamicForm formFields={formFields} onSubmit={handleSubmit} />;
+  return (
+    <>
+    <Typography variant="h4" align="center" sx={{ fontFamily: "Montserrat", marginBottom: 2 }}>
+    Product Form
+  </Typography>
+  <DynamicForm formFields={formFields} onSubmit={handleSubmit} />
+  </>
+  );
 };
 
 export default RegForm;
