@@ -1,12 +1,23 @@
-import React from 'react';
-import ExcelTable from './Common/DynamicComponent/Form/ExcelTable';
+import React from "react";
+import PaymentReceiptForm from "./Common/DynamicComponent/AccountingForms/PaymentReceiptForm";
+import TaxGstFilingForm from "./Common/DynamicComponent/AccountingForms/TaxGstFilingForm";
+import ExpenseForm from "./Common/DynamicComponent/AccountingForms/ExpenseForm";
+//import Example from "./Common/DynamicComponent/AccountingForms/Example";
 
-const App = () => {
+
+
+function App() {
+  // const expenseTypes = ["Travel", "Food", "Office Supplies", "Utilities", "Other"];
+  // const paymentModes = ["Cash", "Credit Card", "Debit Card", "UPI", "Bank Transfer"];
+
   return (
-    <div>
-      <ExcelTable />
+    <div className="App">
+      <ExpenseForm  /> 
+        <PaymentReceiptForm />
+      <TaxGstFilingForm />
+      {/* <Example /> */}
     </div>
   );
-};
+}
 
 export default App;
