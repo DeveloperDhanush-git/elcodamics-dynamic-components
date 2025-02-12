@@ -1,12 +1,20 @@
-import Button from "./Common/DynamicComponents/Button/Button"; 
 import React from "react";
-
-function App() {
+import VendorForm from "./Common/DynamicCompents/Suppliersform/VendorForm";
+import PurchaseOrderForm from "./Common/DynamicCompents/Suppliersform/PurchaseOrderForm";
+import SupplierPaymentForm from "./Common/DynamicCompents/Suppliersform/SupplierPaymentForm";
+const App = () => {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <h1>Add your Dynamic Components Here</h1>
+    <div>
+      
+      <VendorForm />
+      
+      
+      <PurchaseOrderForm />
+      
+     
+      <SupplierPaymentForm />
     </div>
   );
-}
+};
 
 export default App;
