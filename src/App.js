@@ -1,12 +1,12 @@
-import Button from "./Common/DynamicComponents/Button/Button"; 
-import React from "react";
+import React from 'react';
+import ExcelTable from './Common/DynamicComponent/Form/ExcelTable';
 
-function App() {
+const App = () => {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <h1>Add your Dynamic Components Here</h1>
+    <div>
+      <ExcelTable />
     </div>
   );
-}
+};
 
 export default App;
