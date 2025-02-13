@@ -90,7 +90,7 @@ const DynamicForm = ({ formFields, onSubmit, initialValues = {}, onChange }) => 
   }, [formik.values.quantity, formik.values.unitPrice]);
 
   return (
-    <form className="p-4 max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg mt-10" onSubmit={formik.handleSubmit} style={{ maxWidth: 800, margin: "auto", fontFamily: "Montserrat" }}>
+    <form className="p-4 max-w-4xl mx-auto p-6 bg-white rounded-lg mt-10" onSubmit={formik.handleSubmit} style={{ maxWidth: 800, margin: "auto", fontFamily: "Montserrat" }}>
       <Grid container spacing={2} rowSpacing={3}>
         {formFields.map((field) => (
           <Grid item xs={12} sm={4} key={field.name}>
