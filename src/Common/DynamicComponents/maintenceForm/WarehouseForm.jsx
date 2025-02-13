@@ -1,5 +1,6 @@
 import React from "react";
 import DynamicForm from "./DynamicForm";
+import { Typography } from "@mui/material";
 
 const WarehouseTransferForm = ({ products = [], warehouses = [], onSubmit }) => {
   const formFields = [
@@ -37,7 +38,14 @@ const WarehouseTransferForm = ({ products = [], warehouses = [], onSubmit }) => 
     { name: "transferDate", label: "Transfer Date", type: "date", validation: { required: true } },
   ];
 
-  return <DynamicForm formTitle="Warehouse Transfer Form" formFields={formFields} onSubmit={onSubmit} />;
+  return (
+    <>
+      <Typography variant="h4" align="center" sx={{ fontFamily: "Montserrat", marginBottom: 2 }}>
+        Warehouse Transfer Form
+      </Typography>
+      <DynamicForm formFields={formFields} onSubmit={onSubmit} />
+    </>
+  );
 };
 
 WarehouseTransferForm.defaultProps = {
