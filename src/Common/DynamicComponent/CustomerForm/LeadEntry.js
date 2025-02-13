@@ -1,5 +1,6 @@
 import React from "react";
 import DynamicForm from "./DynamicForm";
+import { Typography } from "@mui/material";
 
 const leadFormFields = [
   { name: "leadName", label: "Lead Name", type: "text" },
@@ -26,7 +27,7 @@ const leadFormFields = [
       { label: "Converted", value: "converted" }
     ]
   },
-  { name: "notes", label: "Notes", type: "text" }
+  { name: "notes", label: "Notes", type: "textarea" }
 ];
 
 const handleLeadSubmit = (values) => {
@@ -35,8 +36,10 @@ const handleLeadSubmit = (values) => {
 
 const LeadForm = () => (
   <div>
-
-    <DynamicForm formTitle="Lead Entry Form" formFields={leadFormFields} onSubmit={handleLeadSubmit} />
+    <Typography variant="h4" align="center" sx={{ fontFamily: "Montserrat", marginBottom: 2 }}>
+    Lead Entry Form
+      </Typography>
+    <DynamicForm formFields={leadFormFields} onSubmit={handleLeadSubmit} />
   </div>
 );
 

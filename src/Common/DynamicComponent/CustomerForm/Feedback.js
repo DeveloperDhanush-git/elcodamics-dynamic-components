@@ -1,5 +1,6 @@
 import React from "react";
 import DynamicForm from "./DynamicForm";
+import { Typography } from "@mui/material";
 
 const feedbackFormFields = [
   {
@@ -21,8 +22,6 @@ const feedbackFormFields = [
       { label: "Product Quality", value: "product_quality" }
     ]
   },
-  { name: "complaintDetails", label: "Complaint Details", type: "text" },
-  { name: "attachments", label: "Attachments", type: "file" },
   {
     name: "status",
     label: "Status",
@@ -32,7 +31,10 @@ const feedbackFormFields = [
       { label: "Resolved", value: "resolved" },
       { label: "Closed", value: "closed" }
     ]
-  }
+  },
+  { name: "complaintDetails", label: "Complaint Details", type: "textarea" },
+  { name: "attachments", label: "Attachments", type: "file", },
+  
 ];
 
 const handleFeedbackSubmit = (values) => {
@@ -41,7 +43,10 @@ const handleFeedbackSubmit = (values) => {
 
 const FeedbackForm = () => (
   <div>
-    <DynamicForm formTitle="Customer Feedback/Complaint Form" formFields={feedbackFormFields} onSubmit={handleFeedbackSubmit} />
+    <Typography variant="h4" align="center" sx={{ fontFamily: "Montserrat", marginBottom: 2 }}>
+    Customer Feedback/Complaint Form
+      </Typography>
+    <DynamicForm  formFields={feedbackFormFields} onSubmit={handleFeedbackSubmit} />
   </div>
 );
 

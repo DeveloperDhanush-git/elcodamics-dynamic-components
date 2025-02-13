@@ -1,5 +1,6 @@
 import React from "react";
 import DynamicForm from "./DynamicForm";
+import { Typography } from "@mui/material";
 
 const customerFormFields = [
   { name: "customerName", label: "Customer Name", type: "text" },
@@ -33,7 +34,12 @@ const handleCustomerSubmit = (values) => {
 
 const CustomerForm = () => (
   <div>
-    <DynamicForm formTitle="Add/Edit Customer Form" formFields={customerFormFields} onSubmit={handleCustomerSubmit} />
+
+      <Typography variant="h4" align="center" sx={{ fontFamily: "Montserrat", marginBottom: 2 }}>
+        Add/Edit Customer Form
+      </Typography>
+      <DynamicForm formFields={customerFormFields} onSubmit={handleCustomerSubmit} />
+  
   </div>
 );
 
