@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import DynamicForm from "./DynamicForm";
+import { Typography } from "@mui/material";
 
 const formFields = [
   {
@@ -32,7 +33,7 @@ const formFields = [
     type: "number",
     value: 0,
     validation: { required: true },
-    disabled: true, // Auto-calculated value
+    disabled: true, 
   },
   {
     name: "filingDate",
@@ -66,10 +67,10 @@ const TaxGstFilingForm = () => {
     let gstRate = 0;
     switch (gstType) {
       case "cgst_sgst":
-        gstRate = 9; // 9% for CGST + SGST
+        gstRate = 9; 
         break;
       case "igst":
-        gstRate = 18; // 18% for IGST
+        gstRate = 18;
         break;
       default:
         gstRate = 0;
@@ -77,7 +78,7 @@ const TaxGstFilingForm = () => {
     return (invoiceAmount * (gstRate / 100)) + invoiceAmount;
   };
 
-  // Whenever the GST Type or Invoice Amount changes, recalculate the amount
+  
   const handleGstChange = (event) => {
     const selectedGstType = event.target.value;
     setGstType(selectedGstType);
@@ -92,6 +93,9 @@ const TaxGstFilingForm = () => {
 
   return (
     <div className="form-container">
+      <Typography variant="h4" align="center" sx={{ fontFamily: "Montserrat", marginBottom: 2 }}>
+      Tax/GST Filing Form
+      </Typography>
       <DynamicForm
         formFields={formFields.map((field) => {
           if (field.name === "amount") {
@@ -106,7 +110,7 @@ const TaxGstFilingForm = () => {
           return field;
         })}
         onSubmit={handleSubmit}
-        formTitle="Tax/GST Filing Form"
+        
       />
     </div>
   );

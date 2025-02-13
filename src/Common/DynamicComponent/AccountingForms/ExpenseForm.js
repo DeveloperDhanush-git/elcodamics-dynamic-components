@@ -1,5 +1,6 @@
 import React from "react";
 import DynamicForm from "./DynamicForm";
+import { Typography } from "@mui/material";
 
 
 const formFields = [
@@ -43,7 +44,7 @@ const formFields = [
   { 
     name: "notes", 
     label: "Notes", 
-    type: "textarea", 
+    type: "text", 
     validation: { required: false } 
   },
 ];
@@ -55,6 +56,10 @@ const ExpenseForm = () => {
 
   return (
     <div className="form-container">
+      <Typography variant="h4" align="center" sx={{ fontFamily: "Montserrat", 
+marginBottom: 2 }}>
+Expense Entry Form
+</Typography>
       
       <DynamicForm formFields={formFields} onSubmit={handleSubmit} formTitle="Expense Entry Form" />
     </div>

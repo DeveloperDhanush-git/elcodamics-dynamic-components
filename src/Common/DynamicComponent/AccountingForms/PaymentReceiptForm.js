@@ -1,5 +1,6 @@
 import React from "react";
 import DynamicForm from "./DynamicForm";
+import { Typography } from "@mui/material";
 
 const formFields = [
   {
@@ -60,11 +61,14 @@ const PaymentReceiptForm = () => {
   };
 
   return (
+    
     <div className="form-container">
+      <Typography variant="h4" align="center" sx={{ fontFamily: "Montserrat", marginBottom: 2 }}>
+      Payment Receipt Form
+      </Typography>
       <DynamicForm
         formFields={formFields}
         onSubmit={handleSubmit}
-        formTitle="Payment Receipt Form"
       />
     </div>
   );
