@@ -1,5 +1,6 @@
 import React from "react";
 import DynamicForm from "./DynamicForm";
+import { Typography } from "@mui/material";
 
 const vendorFields = [
   { name: "vendorName", label: "Vendor Name", type: "text", validation: { required: true } },
@@ -22,9 +23,15 @@ const vendorFields = [
     validation: { required: true },
   },
 ];
-
 const VendorForm = () => {
-  return <DynamicForm formFields={vendorFields} onSubmit={(values) => console.log(values)} formTitle="Vendor Form" />;
+  return (
+    <>
+      <Typography variant="h4" align="center" sx={{ fontFamily: "Montserrat", marginBottom: 2 }}>
+        VendorForm
+      </Typography>
+      <DynamicForm formFields={vendorFields} onSubmit={(values) => console.log(values)} />
+    </>
+  );
 };
 
 export default VendorForm;
