@@ -65,10 +65,8 @@ const DynamicForm = ({ formFields, onSubmit }) => {
   });
 
   return (
-    <form onSubmit={formik.handleSubmit} style={{ maxWidth: 800, margin: "auto", fontFamily: "Montserrat" }}>
-      <Typography variant="h4" align="center" sx={{ fontFamily: "Montserrat", mb: 2 }}>
-        
-      </Typography>
+    <form className="p-4 max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg mt-10" onSubmit={formik.handleSubmit} style={{ maxWidth: 800, margin: "auto", fontFamily: "Montserrat" }}>
+      
       <Grid container spacing={2} rowSpacing={3}>
         {formFields.map((field) => (
           <Grid item xs={12} sm={4} key={field.name}>
@@ -85,7 +83,6 @@ const DynamicForm = ({ formFields, onSubmit }) => {
                   onBlur={formik.handleBlur}
                   variant="outlined"
                   fullWidth
-                  sx={{ "& .MuiOutlinedInput-root": { height: "32px", fontSize: "13px", padding: "5px" } }}
                   size="small"
                 />
               ) : field.type === "number" ? (
@@ -97,9 +94,29 @@ const DynamicForm = ({ formFields, onSubmit }) => {
                   onBlur={formik.handleBlur}
                   variant="outlined"
                   fullWidth
-                  inputProps={{ min: field.validation?.min, max: field.validation?.max }}
-                  sx={{ "& .MuiOutlinedInput-root": { height: "32px", fontSize: "13px", padding: "5px" } }}
                   size="small"
+                />
+              ) : field.type === "date" ? (
+                <TextField
+                  type="date"
+                  name={field.name}
+                  value={formik.values[field.name]}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  variant="outlined"
+                  fullWidth
+                  size="small"
+                />
+              ) : field.type === "textarea" ? (
+                <TextField
+                  name={field.name}
+                  value={formik.values[field.name]}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  variant="outlined"
+                  fullWidth
+                  multiline
+                  rows={4}
                 />
               ) : field.type === "select" ? (
                 <Select
@@ -108,83 +125,32 @@ const DynamicForm = ({ formFields, onSubmit }) => {
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   fullWidth
-                  sx={{ height: "32px", fontSize: "13px" }}
                   size="small"
                 >
                   {field.options.map((option) => (
-                    <MenuItem key={option.value} value={option.value} sx={{ fontFamily: "Montserrat" }}>
+                    <MenuItem key={option.value} value={option.value}>
                       {option.label}
                     </MenuItem>
                   ))}
                 </Select>
               ) : field.type === "file" ? (
-                <Box
-  {...getRootProps()}
-  sx={{
-    border: "2px dashed #ccc",
-    borderRadius: "8px",
-    padding: "20px",
-    height: "120px",
-    textAlign: "center",
-    cursor: "pointer",
-    backgroundColor: "#F9F9F9",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    fontFamily: "Montserrat",
-    position: "relative",
-  }}
->
-  <input {...getInputProps()} />
-  {!image ? (
-    <>
-      <CloudUploadIcon fontSize="large" color="primary" />
-      <Typography variant="body2" sx={{ fontFamily: "Montserrat", mt: 1 }}>
-        Drag and drop an image here or click to select
-      </Typography>
-    </>
-  ) : (
-    <Box sx={{ position: "relative", width: "100%", height: "100%" }}>
-      <img
-        src={image}
-        alt="Preview"
-        style={{
-          width: "100%",
-          height: "100%",
-          objectFit: "contain",
-          borderRadius: "8px",
-        }}
-      />
-      
-      <Button
-        variant="contained"
-        color="secondary"
-        size="small"
-        onClick={(e) => {
-          e.stopPropagation(); 
-          setImage(null);
-        }}
-        sx={{
-          position: "absolute",
-          top: 5,
-          right: 5,
-          fontSize: "12px",
-          padding: "2px 6px",
-          backgroundColor: "rgba(0,0,0,0.7)",
-          "&:hover": { backgroundColor: "rgba(0,0,0,0.9)" },
-        }}
-      >
-        ✖
-      </Button>
-    </Box>
-  )}
-</Box>
-
-
+                <Box {...getRootProps()} sx={{ border: "2px dashed #ccc", padding: "20px", textAlign: "center", cursor: "pointer" }}>
+                  <input {...getInputProps()} />
+                  {!image ? (
+                    <>
+                      <CloudUploadIcon fontSize="large" color="primary" />
+                      <Typography variant="body2">Drag and drop an image here or click to select</Typography>
+                    </>
+                  ) : (
+                    <Box>
+                      <img src={image} alt="Preview" style={{ width: "100%", height: "100px", objectFit: "contain" }} />
+                      <Button onClick={(e) => { e.stopPropagation(); setImage(null); }}>✖</Button>
+                    </Box>
+                  )}
+                </Box>
               ) : null}
               {formik.touched[field.name] && formik.errors[field.name] && (
-                <Typography color="error" variant="caption" sx={{ fontFamily: "Montserrat" }}>
+                <Typography color="error" variant="caption">
                   {formik.errors[field.name]}
                 </Typography>
               )}
@@ -193,7 +159,7 @@ const DynamicForm = ({ formFields, onSubmit }) => {
         ))}
       </Grid>
       <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-        <Button type="submit" variant="contained" color="primary" sx={{ fontFamily: "Montserrat", padding: "6px 16px", fontSize: "14px" }}>
+        <Button type="submit" variant="contained" color="primary">
           Submit
         </Button>
       </Box>

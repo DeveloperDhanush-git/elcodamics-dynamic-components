@@ -20,7 +20,7 @@ const RegForm = () => {
   return (
     <>
     <Typography variant="h4" align="center" sx={{ fontFamily: "Montserrat", marginBottom: 2 }}>
-    Product Form
+    Registration Form
   </Typography>
   <DynamicForm formFields={formFields} onSubmit={handleSubmit} />
   </>
