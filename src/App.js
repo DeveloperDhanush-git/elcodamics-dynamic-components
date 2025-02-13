@@ -1,11 +1,17 @@
-import Button from "./Common/DynamicComponents/Button/Button"; 
+
 import React from "react";
+import ProductForm from "./Common/DynamicComponents/maintenceForm/ProductForm";
+import StockAdjustmentForm from "./Common/DynamicComponents/maintenceForm/StockAdjustmentForm";
+import WarehouseTransferForm from "./Common/DynamicComponents/maintenceForm/ProductForm";
+
 
 function App() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <h1>Add your Dynamic Components Here</h1>
-    </div>
+    <>
+    <ProductForm />
+    <StockAdjustmentForm/>
+    <WarehouseTransferForm/>
+    </>
   );
 }
 
