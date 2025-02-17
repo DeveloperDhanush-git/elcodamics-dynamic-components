@@ -11,8 +11,6 @@ const feedbackFormFields = [
       { label: "Product Quality", value: "product_quality" },
     ],
   },
-  { name: "complaintDetails", label: "Complaint Details", type: "text" },
-  { name: "attachments", label: "Attachments", type: "file" },
   {
     name: "status",
     label: "Status",
