@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import {
@@ -18,8 +18,14 @@ import {
 import { useDropzone } from "react-dropzone";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
-const DynamicForm = ({ formTitle, formFields, onSubmit }) => {
+const DynamicForm = ({ formTitle, formFields, onSubmit, initialValues }) => {
   const [image, setImage] = useState(null);
+  const [formData, setFormData] = useState(initialValues || {});
+
+  // When initialValues change (on edit), update the form data
+  useEffect(() => {
+    setFormData(initialValues || {});
+  }, [initialValues]);
 
   const onDrop = useCallback((acceptedFiles) => {
     const file = acceptedFiles[0];
@@ -34,6 +40,13 @@ const DynamicForm = ({ formTitle, formFields, onSubmit }) => {
     multiple: false,
   });
 
+  // Handle change in form data
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // Validation Schema based on formFields
   const validationSchema = Yup.object(
     formFields.reduce((schema, field) => {
       if (field.validation) {
@@ -55,6 +68,11 @@ const DynamicForm = ({ formTitle, formFields, onSubmit }) => {
     onSubmit,
   });
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSubmit(formData);
+  };
+
   return (
     <Box
       sx={{
@@ -68,45 +86,70 @@ const DynamicForm = ({ formTitle, formFields, onSubmit }) => {
       }}
     >
       <Typography
-  variant="h4"
-  sx={{
-    textAlign: "center",
-    marginBottom: 3,
-    fontFamily: "Montserrat",
-    color: "black",
-    padding: "12px",
-  }}
->
-  {formTitle || "Untitled Form"}
-</Typography>
+        variant="h4"
+        sx={{
+          textAlign: "center",
+          marginBottom: 3,
+          fontFamily: "Montserrat",
+          color: "black",
+          padding: "12px",
+        }}
+      >
+        {formTitle || "Untitled Form"}
+      </Typography>
 
-      <form onSubmit={formik.handleSubmit} style={{ width: "100%" }}>
+      <form onSubmit={handleSubmit} style={{ width: "100%" }}>
         <Grid container spacing={2}>
           {formFields.map((field) => (
             <Grid item xs={12} sm={4} key={field.name}>
               <FormControl fullWidth>
-                <Typography variant="subtitle1" sx={{color: "#333", marginBottom: 1 , fontFamily: "Montserrat",}}>
+                <Typography
+                  variant="subtitle1"
+                  sx={{
+                    color: "#333",
+                    marginBottom: 1,
+                    fontFamily: "Montserrat",
+                  }}
+                >
                   {field.label}
                 </Typography>
-                {field.type === "text" || field.type === "email" || field.type === "password" ? (
+                {field.type === "text" ||
+                field.type === "email" ||
+                field.type === "password" ? (
                   <TextField
                     type={field.type}
                     name={field.name}
-                    value={formik.values[field.name]}
-                    onChange={formik.handleChange}
+                    value={formData[field.name] || formik.values[field.name]}
+                    onChange={(e) => {
+                      handleChange(e);
+                      formik.handleChange(e);
+                    }}
                     onBlur={formik.handleBlur}
                     variant="outlined"
                     fullWidth
-                    sx={{ "& .MuiInputBase-root": { fontSize: "1rem", borderRadius: "8px", fontFamily: "Montserrat", } }}
+                    sx={{
+                      "& .MuiInputBase-root": {
+                        fontSize: "1rem",
+                        borderRadius: "8px",
+                        fontFamily: "Montserrat",
+                      },
+                    }}
                   />
                 ) : field.type === "select" ? (
                   <Select
                     name={field.name}
-                    value={formik.values[field.name]}
-                    onChange={formik.handleChange}
+                    value={formData[field.name] || formik.values[field.name]}
+                    onChange={(e) => {
+                      handleChange(e);
+                      formik.handleChange(e);
+                    }}
                     onBlur={formik.handleBlur}
                     fullWidth
-                    sx={{ fontSize: "1rem", borderRadius: "8px", fontFamily: "Montserrat", }}
+                    sx={{
+                      fontSize: "1rem",
+                      borderRadius: "8px",
+                      fontFamily: "Montserrat",
+                    }}
                   >
                     {field.options.map((option) => (
                       <MenuItem key={option.value} value={option.value} sx={{ fontSize: "1rem" }}>
@@ -115,7 +158,14 @@ const DynamicForm = ({ formTitle, formFields, onSubmit }) => {
                     ))}
                   </Select>
                 ) : field.type === "radio" ? (
-                  <RadioGroup name={field.name} value={formik.values[field.name]} onChange={formik.handleChange}>
+                  <RadioGroup
+                    name={field.name}
+                    value={formData[field.name] || formik.values[field.name]}
+                    onChange={(e) => {
+                      handleChange(e);
+                      formik.handleChange(e);
+                    }}
+                  >
                     {field.options.map((option) => (
                       <FormControlLabel
                         key={option.value}
@@ -132,12 +182,12 @@ const DynamicForm = ({ formTitle, formFields, onSubmit }) => {
                         key={option.value}
                         control={
                           <Checkbox
-                            checked={formik.values[field.name].includes(option.value)}
+                            checked={formData[field.name].includes(option.value) || formik.values[field.name].includes(option.value)}
                             onChange={(event) => {
                               const newValue = event.target.checked
-                                ? [...formik.values[field.name], option.value]
-                                : formik.values[field.name].filter((val) => val !== option.value);
-                              formik.setFieldValue(field.name, newValue);
+                                ? [...formData[field.name], option.value]
+                                : formData[field.name].filter((val) => val !== option.value);
+                              setFormData((prev) => ({ ...prev, [field.name]: newValue }));
                             }}
                           />
                         }
@@ -162,10 +212,29 @@ const DynamicForm = ({ formTitle, formFields, onSubmit }) => {
                   >
                     <input {...getInputProps()} />
                     <CloudUploadIcon fontSize="large" color="primary" />
-                    <Typography variant="body1" sx={{ fontSize: "1rem", color: "#555", fontFamily: "Montserrat", }}>
+                    <Typography
+                      variant="body1"
+                      sx={{
+                        fontSize: "1rem",
+                        color: "#555",
+                        fontFamily: "Montserrat",
+                      }}
+                    >
                       Drag and drop an image here or click to upload
                     </Typography>
-                    {image && <img src={image} alt="Preview" style={{ marginTop: 10, maxWidth: "100%", height: "auto", borderRadius: "6px", fontFamily: "Montserrat", }} />}
+                    {image && (
+                      <img
+                        src={image}
+                        alt="Preview"
+                        style={{
+                          marginTop: 10,
+                          maxWidth: "100%",
+                          height: "auto",
+                          borderRadius: "6px",
+                          fontFamily: "Montserrat",
+                        }}
+                      />
+                    )}
                   </Box>
                 ) : null}
               </FormControl>
@@ -177,9 +246,15 @@ const DynamicForm = ({ formTitle, formFields, onSubmit }) => {
           variant="contained"
           color="primary"
           fullWidth
-          sx={{ marginTop: 3, fontSize: "1.2rem", padding: "12px", borderRadius: "8px", fontFamily: "Montserrat", }}
+          sx={{
+            marginTop: 3,
+            fontSize: "1.2rem",
+            padding: "12px",
+            borderRadius: "8px",
+            fontFamily: "Montserrat",
+          }}
         >
-          Submit
+          {initialValues?.id ? "Update" : "Submit"}
         </Button>
       </form>
     </Box>
