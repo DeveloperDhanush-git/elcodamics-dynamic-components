@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import DynamicForm from "./DynamicForm";
+import { Edit as EditIcon, Delete as DeleteIcon } from "@mui/icons-material";
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, IconButton } from "@mui/material";
 
 const leadFormFields = [
   { name: "leadName", label: "Lead Name", type: "text" },
@@ -115,31 +117,46 @@ const LeadForm = () => {
         initialValues={selectedLead || {}}
       />
 
-      <h2 className="text-xl font-bold mt-6">Lead List</h2>
-      <ul className="mt-4 border border-gray-200 rounded-md overflow-hidden">
-        {leads.map((lead) => (
-          <li key={lead.id} className="flex justify-between p-4 border-b last:border-b-0">
-            <div>
-              <p className="font-medium">{lead.leadName} ({lead.email})</p>
-              <p className="text-gray-600 text-sm">Status: {lead.status}</p>
-            </div>
-            <div className="flex space-x-2">
-              <button
-                onClick={() => handleEdit(lead)} 
-                className="px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-              >
-                Edit
-              </button>
-              <button
-                onClick={() => handleDelete(lead.id)} 
-                className="px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600"
-              >
-                Delete
-              </button>
-            </div>
-          </li>
-        ))}
-      </ul>
+      <h2 className="text-xl  mt-6" style={{fontFamily: "Montserrat",fontSize: "1.3rem",}}>Lead List</h2>
+      <TableContainer className="mt-4">
+        <Table sx={{ minWidth: 650 }} aria-label="lead table">
+          <TableHead>
+            <TableRow>
+              <TableCell style={{fontFamily: "Montserrat",fontSize: "1.1rem",}}>Lead Name</TableCell>
+              <TableCell style={{fontFamily: "Montserrat",fontSize: "1.1rem",}}>Email</TableCell>
+              <TableCell style={{fontFamily: "Montserrat",fontSize: "1.1rem",}}>Status</TableCell>
+              <TableCell style={{fontFamily: "Montserrat",fontSize: "1.1rem",}}>Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {leads.map((lead) => (
+              <TableRow key={lead.id}>
+                <TableCell style={{fontFamily: "Montserrat",fontSize: "1.0rem",}}>{lead.leadName}</TableCell>
+                <TableCell style={{fontFamily: "Montserrat",fontSize: "1.0rem",}}>{lead.email}</TableCell>
+                <TableCell style={{fontFamily: "Montserrat",fontSize: "1.0rem",}}>{lead.status}</TableCell>
+                <TableCell style={{fontFamily: "Montserrat",fontSize: "1.0rem",}}>
+                  <div className="flex space-x-2">
+                    <IconButton
+                      onClick={() => handleEdit(lead)}
+                      color="primary"
+                      aria-label="edit"
+                    >
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton
+                      onClick={() => handleDelete(lead.id)}
+                      color="secondary"
+                      aria-label="delete"
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </div>
   );
 };

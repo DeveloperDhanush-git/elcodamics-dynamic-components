@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import DynamicForm from "./DynamicForm";
+import { Edit as EditIcon, Delete as DeleteIcon } from "@mui/icons-material";
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, IconButton } from "@mui/material";
 
 const feedbackFormFields = [
   { name: "customerName", label: "Customer Name", type: "text" },
@@ -47,12 +49,12 @@ const FeedbackForm = () => {
   // Handle form submission for both creating and updating feedback
   const handleFeedbackSubmit = async (values) => {
     console.log("Feedback Form Submitted:", values);
-  
+
     try {
       const method = values.id ? "PUT" : "POST"; // Check if it has an id (for update)
-  
+
       const feedbackData = { ...values };
-  
+
       const response = await fetch(API_URL, {
         method,
         headers: {
@@ -60,17 +62,16 @@ const FeedbackForm = () => {
         },
         body: JSON.stringify(feedbackData),
       });
-  
-      // Check if the response is valid JSON
+
       const textResponse = await response.text();
-  
+
       try {
         const data = JSON.parse(textResponse); // Try parsing the text as JSON
-  
+
         if (!response.ok) {
           throw new Error(data.error || 'An error occurred');
         }
-  
+
         alert(data.message);
         fetchFeedback(); // Refresh the feedback list
         setSelectedFeedback(null); // Reset form after submission
@@ -83,7 +84,6 @@ const FeedbackForm = () => {
       alert("An error occurred while submitting the form: " + error.message);
     }
   };
-  
 
   // Handle feedback deletion (soft delete)
   const handleDelete = async (id) => {
@@ -121,31 +121,46 @@ const FeedbackForm = () => {
         initialValues={selectedFeedback || {}}
       />
 
-      <h2 className="text-xl font-bold mt-6">Feedback List</h2>
-      <ul className="mt-4 border border-gray-200 rounded-md overflow-hidden">
-        {feedbackList.map((feedback) => (
-          <li key={feedback.id} className="flex justify-between p-4 border-b last:border-b-0">
-            <div>
-              <p className="font-medium">{feedback.customerName} ({feedback.issueCategory})</p>
-              <p className="text-gray-600 text-sm">Status: {feedback.status}</p>
-            </div>
-            <div className="flex space-x-2">
-              <button
-                onClick={() => handleEdit(feedback)} 
-                className="px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-              >
-                Edit
-              </button>
-              <button
-                onClick={() => handleDelete(feedback.id)} 
-                className="px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600"
-              >
-                Delete
-              </button>
-            </div>
-          </li>
-        ))}
-      </ul>
+      <h2 className="text-xl mt-6"  style={{fontFamily: "Montserrat",fontSize: "1.3rem",}}>Feedback List</h2>
+      <TableContainer className="mt-4">
+        <Table sx={{ minWidth: 650 }} aria-label="feedback table">
+          <TableHead>
+            <TableRow>
+              <TableCell  style={{fontFamily: "Montserrat",fontSize: "1.1rem",}}>Customer Name</TableCell>
+              <TableCell  style={{fontFamily: "Montserrat",fontSize: "1.1rem",}}>Issue Category</TableCell>
+              <TableCell  style={{fontFamily: "Montserrat",fontSize: "1.1rem",}}>Status</TableCell>
+              <TableCell  style={{fontFamily: "Montserrat",fontSize: "1.1rem",}}>Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {feedbackList.map((feedback) => (
+              <TableRow key={feedback.id}>
+                <TableCell  style={{fontFamily: "Montserrat",fontSize: "1.0rem",}}>{feedback.customerName}</TableCell>
+                <TableCell  style={{fontFamily: "Montserrat",fontSize: "1.0rem",}}>{feedback.issueCategory}</TableCell>
+                <TableCell  style={{fontFamily: "Montserrat",fontSize: "1.0rem",}}>{feedback.status}</TableCell>
+                <TableCell  style={{fontFamily: "Montserrat",fontSize: "1.0rem",}}>
+                  <div className="flex space-x-2">
+                    <IconButton
+                      onClick={() => handleEdit(feedback)}
+                      color="primary"
+                      aria-label="edit"
+                    >
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton
+                      onClick={() => handleDelete(feedback.id)}
+                      color="secondary"
+                      aria-label="delete"
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </div>
   );
 };

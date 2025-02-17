@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
 import DynamicForm from "./DynamicForm";
+import { Edit as EditIcon, Delete as DeleteIcon } from "@mui/icons-material";
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, IconButton } from "@mui/material";
+
 
 const customerFormFields = [
   { name: "customerName", label: "Customer Name", type: "text" },
@@ -101,39 +104,53 @@ const CustomerForm = () => {
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg">
-      <DynamicForm
-        formTitle={selectedCustomer ? "Edit Customer" : "Add/Edit Customer Form"}
-        formFields={customerFormFields}
-        onSubmit={handleCustomerSubmit}
-        initialValues={selectedCustomer || {}}
-      />
-      
-      <h2 className="text-xl font-bold mt-6">Customer List</h2>
-      <ul className="mt-4 border border-gray-200 rounded-md overflow-hidden">
-        {customers.map((customer) => (
-          <li key={customer.id} className="flex justify-between p-4 border-b last:border-b-0">
-            <div>
-              <p className="font-medium">{customer.customerName} ({customer.email})</p>
-              <p className="text-gray-600 text-sm">Status: {customer.status}</p>
-            </div>
-            <div className="flex space-x-2">
-              <button
-                onClick={() => handleEdit(customer)} 
-                className="px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-              >
-                Edit
-              </button>
-              <button
-                onClick={() => handleDelete(customer.id)} 
-                className="px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600"
-              >
-                Delete
-              </button>
-            </div>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <DynamicForm
+      formTitle={selectedCustomer ? "Edit Customer" : "Add/Edit Customer Form"}
+      formFields={customerFormFields}
+      onSubmit={handleCustomerSubmit}
+      initialValues={selectedCustomer || {}}
+    />
+    <h2 className="text-xl mt-6"  style={{fontFamily: "Montserrat",fontSize: "1.3rem",}}>Customer List</h2>
+    <TableContainer className="mt-4">
+      <Table sx={{ minWidth: 650 }} aria-label="customer table">
+        <TableHead>
+          <TableRow>
+            <TableCell style={{fontFamily: "Montserrat",fontSize: "1.1rem",}}>Customer Name</TableCell>
+            <TableCell style={{fontFamily: "Montserrat",fontSize: "1.1rem",}}>Email</TableCell>
+            <TableCell style={{fontFamily: "Montserrat",fontSize: "1.1rem",}}>Status</TableCell>
+            <TableCell style={{fontFamily: "Montserrat",fontSize: "1.1rem",}}>Actions</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody >
+          {customers.map((customer) => (
+            <TableRow style={{fontFamily: "Montserrat",}} key={customer.id}>
+              <TableCell style={{fontFamily: "Montserrat",fontSize: "1.0rem",}}>{customer.customerName}</TableCell>
+              <TableCell style={{fontFamily: "Montserrat",fontSize: "1.0rem"}}>{customer.email}</TableCell>
+              <TableCell style={{fontFamily: "Montserrat",fontSize: "1.0rem"}}>{customer.status}</TableCell>
+              <TableCell style={{fontFamily: "Montserrat",fontSize: "1.0rem"}}>
+                <div className="flex space-x-2">
+                  <IconButton
+                    onClick={() => handleEdit(customer)}
+                    color="primary"
+                    aria-label="edit"
+                  >
+                    <EditIcon />
+                  </IconButton>
+                  <IconButton
+                    onClick={() => handleDelete(customer.id)}
+                    color="secondary"
+                    aria-label="delete"
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  </div>
   );
 };
 
