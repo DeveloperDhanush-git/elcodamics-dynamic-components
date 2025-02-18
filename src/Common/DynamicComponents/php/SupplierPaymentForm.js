@@ -55,129 +55,119 @@ const supplierPaymentFields = [
 ];
 
 const SupplierPaymentForm = () => {
-  const [formData, setFormData] = useState({
-    supplierName: "",
-    purchaseOrderNumber: "",
-    amountPaid: 0,
-    paymentMode: "",
-    paymentDate: "",
-  });
+  const [formData, setFormData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [openSnackbar, setOpenSnackbar] = useState(false);
-  const [payments, setPayments] = useState([]); // Store the list of payments
-  const [editIndex, setEditIndex] = useState(null); // To track the item being edited
+  const [payments, setPayments] = useState([]);
+  const [editIndex, setEditIndex] = useState(null);
 
-  // Fetch the payments data from the backend
+  const API_BASE_URL = "http://localhost"; // Change this if needed
+
+  // Fetch payments from the server
   const fetchPayments = async () => {
     try {
-      const response = await fetch("http://localhost/SavePayment.php");
+      const response = await fetch(`${API_BASE_URL}/SavePayment.php`);
+      if (!response.ok) throw new Error("Failed to fetch payments");
+
       const data = await response.json();
-  
-      if (response.ok) {
-        setPayments(data.data); // Store fetched payments in state
-      } else {
-        throw new Error("Failed to fetch payments");
-      }
+      console.log("Fetched Payments:", data); // Debugging API response
+      setPayments(Array.isArray(data?.data) ? data.data : []);
     } catch (error) {
       console.error("Error fetching payments:", error);
       setMessage("Error fetching payments");
       setOpenSnackbar(true);
-    }
-  };
 
-  // Fetch payments when component mounts
-  useEffect(() => {
-    fetchPayments();
-  }, []);
-
-  // Handle form submission
-  const handleSubmit = async (values) => {
-    try {
-      setLoading(true);
-      const paymentData = { ...values };
-
-      // Sending data to the PHP backend
-      const response = await fetch("http://localhost/SavePayment.php", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      // Fallback data to display something
+      setPayments([
+        {
+          id: 1,
+          supplierName: "Supplier A",
+          purchaseOrderNumber: "PO-001",
+          amountPaid: 1000,
+          paymentMode: "Credit Card",
+          paymentDate: "2024-02-19",
         },
-        body: JSON.stringify(paymentData), // Sending as JSON
-      });
-
-      if (!response.ok) {
-        throw new Error("Server response was not OK");
-      }
-
-      const result = await response.json(); // Assuming your PHP backend returns JSON response
-
-      if (result.success) {
-        setMessage("Payment submitted successfully");
-        fetchPayments(); // Reload payments after submission
-      } else {
-        throw new Error("Error submitting payment");
-      }
-    } catch (error) {
-      setMessage(error.message);
-    } finally {
-      setLoading(false);
-      setOpenSnackbar(true);
-      resetForm();
+      ]);
     }
   };
 
-  // Handle field changes in the form
-  const handleChange = (name, value) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
+  useEffect(() => {
+    fetch("http://localhost:8000/SavePayment.php")
+        .then((response) => response.json())
+        .then((data) => {
+            console.log(data); // Debugging: Check what the API is returning
+            if (data.status === "success") {
+                setPayments(data.data);
+            }
+        })
+        .catch((error) => console.error("Error fetching data:", error));
+}, []);
 
-  // Reset form fields after submission
-  const resetForm = () => {
-    setFormData({
-      supplierName: "",
-      purchaseOrderNumber: "",
-      amountPaid: 0,
-      paymentMode: "",
-      paymentDate: "",
+const handleSubmit = async (values) => {
+  console.log("Submitting:", values);
+  try {
+    setLoading(true);
+    let apiUrl = `${API_BASE_URL}/SavePayment.php`;
+    
+    const response = await fetch(apiUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ...values,
+        _method: editIndex !== null ? "PUT" : "POST",  // Ensure compatibility with PHP
+      }),
     });
-  };
 
-  // Handle edit
+    const result = await response.json();
+    console.log("Server Response:", result);
+
+    if (result.status === "success") {
+      setMessage(editIndex !== null ? "Payment updated successfully" : "Payment submitted successfully");
+      fetchPayments();
+      resetForm();
+    } else {
+      throw new Error(result.message || "Error submitting payment");
+    }
+  } catch (error) {
+    console.error("Error submitting form:", error);
+    setMessage(error.message);
+  } finally {
+    setLoading(false);
+    setOpenSnackbar(true);
+  }
+};
+
+
   const handleEdit = (index) => {
     setEditIndex(index);
     setFormData(payments[index]);
   };
 
-  // Handle delete
   const handleDelete = async (index) => {
-    const paymentId = payments[index].id;
+    const paymentId = payments[index]?.id;
+    if (!paymentId) return;
+
     try {
-      const response = await fetch("http://localhost/deletePayment.php", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ id: paymentId }), // Send the payment ID to delete
+      const response = await fetch(`${API_BASE_URL}/SavePayment.php?id=${paymentId}`, {
+        method: "DELETE",
       });
 
-      if (response.ok) {
-        const updatedPayments = payments.filter((_, i) => i !== index);
-        setPayments(updatedPayments);
-        setMessage("Payment deleted successfully");
-        setOpenSnackbar(true);
-      } else {
-        setMessage("Error deleting payment data");
-        setOpenSnackbar(true);
-      }
+      if (!response.ok) throw new Error("Failed to delete payment");
+
+      setMessage("Payment deleted successfully");
+      fetchPayments(); // Refresh list after deletion
     } catch (error) {
       console.error("Error deleting payment:", error);
-      setMessage("Error deleting payment data");
+      setMessage("Error deleting payment");
+    } finally {
       setOpenSnackbar(true);
     }
+  };
+
+  const resetForm = () => {
+    setFormData(null);
+    setEditIndex(null);
   };
 
   return (
@@ -185,28 +175,16 @@ const SupplierPaymentForm = () => {
       <Typography variant="h4" align="center" sx={{ fontFamily: "Montserrat", marginBottom: 2 }}>
         Supplier Payment Form
       </Typography>
-
-      <DynamicForm
-        formFields={supplierPaymentFields}
-        onSubmit={handleSubmit}
-        initialValues={formData}
-        onChange={handleChange}
-      />
-
+      <DynamicForm formFields={supplierPaymentFields} onSubmit={handleSubmit} initialValues={formData || {}} />
+      
       {loading && (
         <Box sx={{ display: "flex", justifyContent: "center", marginTop: 2 }}>
           <CircularProgress />
         </Box>
       )}
 
-      <Snackbar
-        open={openSnackbar}
-        autoHideDuration={6000}
-        onClose={() => setOpenSnackbar(false)}
-        message={message}
-      />
+      <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={() => setOpenSnackbar(false)} message={message} />
 
-      {/* Table to display the list of payments */}
       <Box sx={{ marginTop: 4 }}>
         <Typography variant="h5" align="center" sx={{ marginBottom: 2 }}>
           Payment List
@@ -224,24 +202,32 @@ const SupplierPaymentForm = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {payments.map((payment, index) => (
-              <TableRow key={payment.id}>
-                <TableCell>{payment.id}</TableCell>
-                <TableCell>{payment.supplierName}</TableCell>
-                <TableCell>{payment.purchaseOrderNumber}</TableCell>
-                <TableCell>{payment.amountPaid}</TableCell>
-                <TableCell>{payment.paymentMode}</TableCell>
-                <TableCell>{payment.paymentDate}</TableCell>
-                <TableCell>
-                  <Button variant="outlined" onClick={() => handleEdit(index)} sx={{ marginRight: 1 }}>
-                    Edit
-                  </Button>
-                  <Button variant="outlined" onClick={() => handleDelete(index)}>
-                    Delete
-                  </Button>
+            {payments.length > 0 ? (
+              payments.map((payment, index) => (
+                <TableRow key={payment.id}>
+                  <TableCell>{payment.id}</TableCell>
+                  <TableCell>{payment.supplierName}</TableCell>
+                  <TableCell>{payment.purchaseOrderNumber}</TableCell>
+                  <TableCell>{payment.amountPaid}</TableCell>
+                  <TableCell>{payment.paymentMode}</TableCell>
+                  <TableCell>{payment.paymentDate}</TableCell>
+                  <TableCell>
+                    <Button variant="outlined" sx={{ marginRight: 1 }} onClick={() => handleEdit(index)}>
+                      Edit
+                    </Button>
+                    <Button variant="outlined" color="error" onClick={() => handleDelete(index)}>
+                      Delete
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={7} align="center">
+                  No payments found.
                 </TableCell>
               </TableRow>
-            ))}
+            )}
           </TableBody>
         </Table>
       </Box>
