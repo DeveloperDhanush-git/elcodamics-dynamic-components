@@ -87,33 +87,34 @@ const PurchaseOrderForm = () => {
     });
   };
 
-  // Handle form submission (add or update purchase order)
   const handleSubmit = async (formData) => {
     try {
-      setLoading(true);
-      const method = formData.id ? "PUT" : "POST"; // Determine method based on whether it's a new order or edit
-      const url = "http://localhost/ProductForm.php"; // PHP endpoint for processing form data
-      const response = await fetch(url, {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+        setLoading(true);
+        const method = formData.id ? "PUT" : "POST"; // Determine method
+        const url = "http://localhost/ProductForm.php"; // PHP endpoint
+        const response = await fetch(url, {
+            method,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formData),
+        });
 
-      const result = await response.json();
-      setMessage(result.message);
-      setOpenSnackbar(true);
-      fetchPurchaseOrders(); // Refresh purchase orders after submission
-      resetForm(); // Reset the form after submission
+        const result = await response.json();
+        setMessage(result.message);
+        setOpenSnackbar(true);
+        
+        if (response.ok) {
+            resetForm(); // Clear the form only on successful submission
+        }
+
+        fetchPurchaseOrders(); // Refresh purchase orders after submission
     } catch (error) {
-      console.error("Error submitting form data:", error);
-      setMessage("Error submitting form data");
-      setOpenSnackbar(true);
+        console.error("Error submitting form data:", error);
+        setMessage("Error submitting form data");
+        setOpenSnackbar(true);
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
-  };
+};
 
   // Handle delete action for a purchase order
   const handleDelete = async (id) => {
@@ -162,15 +163,16 @@ const PurchaseOrderForm = () => {
   // Reset form fields after submission
   const resetForm = () => {
     setFormData({
-      supplierName: "",
-      productName: [],
-      quantity: 0,
-      unitPrice: 0,
-      totalAmount: 0,
-      orderDate: "",
-      expectedDeliveryDate: "",
+        supplierName: "",
+        productName: [],
+        quantity: 0,
+        unitPrice: 0,
+        totalAmount: 0,
+        orderDate: "",
+        expectedDeliveryDate: "",
     });
-  };
+};
+
 
   return (
     <>
@@ -179,11 +181,13 @@ const PurchaseOrderForm = () => {
       </Typography>
 
       <DynamicForm
-        formFields={purchaseOrderFields}
-        onSubmit={(values) => handleSubmit(values)}
-        initialValues={formData}
-        onChange={handleChange}
-      />
+    key={JSON.stringify(formData)} // Force re-render when formData changes
+    formFields={purchaseOrderFields}
+    onSubmit={(values) => handleSubmit(values)}
+    initialValues={formData}
+    onChange={handleChange}
+/>
+
 
       {loading && (
         <Box sx={{ display: "flex", justifyContent: "center", marginTop: 2 }}>
