@@ -26,6 +26,7 @@ const DynamicForm = ({
   const [formData, setFormData] = useState(initialValues || {});
 
   useEffect(() => {
+    // Update formData when initialValues (or formData prop) changes.
     setFormData(initialValues || {});
   }, [initialValues]);
 
@@ -91,6 +92,7 @@ const DynamicForm = ({
   const formik = useFormik({
     initialValues: formikInitialValues,
     validationSchema,
+    enableReinitialize: true, // Ensure the form reinitializes when initialValues change
     onSubmit,
   });
 
@@ -290,6 +292,28 @@ const DynamicForm = ({
                       />
                     ))}
                   </>
+                )}
+                {field.type === "textarea" && (
+                  <TextField
+                    multiline
+                    rows={4}
+                    name={field.name}
+                    value={formData[field.name] || formik.values[field.name]}
+                    onChange={(e) => {
+                      handleChange(e);
+                      formik.handleChange(e);
+                    }}
+                    onBlur={formik.handleBlur}
+                    variant="outlined"
+                    fullWidth
+                    sx={{
+                      "& .MuiInputBase-root": {
+                        fontSize: "1rem",
+                        borderRadius: "8px",
+                        fontFamily: "Montserrat",
+                      },
+                    }}
+                  />
                 )}
               </FormControl>
             </Grid>
