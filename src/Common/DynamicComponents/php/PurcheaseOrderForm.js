@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import DynamicForm from "./Dynamic";
-import { Typography, Button, Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@mui/material";
+import DynamicForm from "./DynamicForm";
+import { Typography, Button, Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, Snackbar } from "@mui/material";
 
 const purchaseOrderFields = [
   {
@@ -46,29 +46,37 @@ const PurchaseOrderForm = () => {
     orderDate: "",
     expectedDeliveryDate: "",
   });
-
   const [purchaseOrders, setPurchaseOrders] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+  const [openSnackbar, setOpenSnackbar] = useState(false);
 
-  // Fetch purchase orders function
+  // Fetch purchase orders from the backend
   const fetchPurchaseOrders = async () => {
     try {
-      const response = await fetch("http://localhost/api.php");
+      setLoading(true);
+      const response = await fetch("http://localhost/ProductForm.php");
       const data = await response.json();
       setPurchaseOrders(data);
     } catch (error) {
       console.error("Error fetching purchase orders:", error);
+      setMessage("Error fetching purchase orders");
+      setOpenSnackbar(true);
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Fetch purchase orders when the component mounts
   useEffect(() => {
-    fetchPurchaseOrders();
+    fetchPurchaseOrders(); // Fetch purchase orders on component mount
   }, []);
 
+  // Handle field changes and recalculate total amount
   const handleChange = (name, value) => {
     setFormData((prevData) => {
-      let updatedData = { ...prevData, [name]: value };
+      const updatedData = { ...prevData, [name]: value };
 
+      // Recalculate totalAmount when quantity or unitPrice changes
       if (name === "quantity" || name === "unitPrice") {
         const quantity = parseFloat(updatedData.quantity) || 0;
         const unitPrice = parseFloat(updatedData.unitPrice) || 0;
@@ -79,10 +87,12 @@ const PurchaseOrderForm = () => {
     });
   };
 
+  // Handle form submission (add or update purchase order)
   const handleSubmit = async (formData) => {
     try {
-      const method = formData.id ? "PUT" : "POST";
-      const url = "http://localhost/api.php";
+      setLoading(true);
+      const method = formData.id ? "PUT" : "POST"; // Determine method based on whether it's a new order or edit
+      const url = "http://localhost/ProductForm.php"; // PHP endpoint for processing form data
       const response = await fetch(url, {
         method,
         headers: {
@@ -92,40 +102,54 @@ const PurchaseOrderForm = () => {
       });
 
       const result = await response.json();
-      console.log(result.message);
-      fetchPurchaseOrders(); // Refresh the list after submit
-      resetForm(); // Reset form after submission
+      setMessage(result.message);
+      setOpenSnackbar(true);
+      fetchPurchaseOrders(); // Refresh purchase orders after submission
+      resetForm(); // Reset the form after submission
     } catch (error) {
       console.error("Error submitting form data:", error);
+      setMessage("Error submitting form data");
+      setOpenSnackbar(true);
+    } finally {
+      setLoading(false);
     }
   };
 
+  // Handle delete action for a purchase order
   const handleDelete = async (id) => {
-    try {
-      const response = await fetch("http://localhost/api.php", {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ id }),
-      });
+    if (window.confirm("Are you sure you want to delete this purchase order?")) {
+      try {
+        setLoading(true);
+        const response = await fetch("http://localhost/ProductForm.php", {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ id }),
+        });
 
-      const result = await response.json();
-      console.log(result.message);
-      fetchPurchaseOrders();
-    } catch (error) {
-      console.error("Error deleting purchase order:", error);
+        const result = await response.json();
+        setMessage(result.message);
+        setOpenSnackbar(true);
+        fetchPurchaseOrders(); // Refresh the list after deletion
+      } catch (error) {
+        console.error("Error deleting purchase order:", error);
+        setMessage("Error deleting purchase order");
+        setOpenSnackbar(true);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
+  // Handle form population for editing
   const handleEdit = (id) => {
     const orderToEdit = purchaseOrders.find((order) => order.id === id);
-    console.log("Editing order:", orderToEdit); // Check the order data here
     if (orderToEdit) {
       setFormData({
         id: orderToEdit.id,
         supplierName: orderToEdit.supplier_name,
-        productName: orderToEdit.product_name.split(", "), // Convert to array
+        productName: orderToEdit.product_name.split(", "), // Convert string to array
         quantity: orderToEdit.quantity,
         unitPrice: orderToEdit.unit_price,
         totalAmount: orderToEdit.total_amount,
@@ -135,6 +159,7 @@ const PurchaseOrderForm = () => {
     }
   };
 
+  // Reset form fields after submission
   const resetForm = () => {
     setFormData({
       supplierName: "",
@@ -155,12 +180,16 @@ const PurchaseOrderForm = () => {
 
       <DynamicForm
         formFields={purchaseOrderFields}
-        onSubmit={(values) => {
-          handleSubmit(values);
-        }}
+        onSubmit={(values) => handleSubmit(values)}
         initialValues={formData}
         onChange={handleChange}
       />
+
+      {loading && (
+        <Box sx={{ display: "flex", justifyContent: "center", marginTop: 2 }}>
+          <CircularProgress />
+        </Box>
+      )}
 
       <Typography variant="h6" align="center" sx={{ marginTop: 4 }}>
         Purchase Orders List
@@ -202,6 +231,13 @@ const PurchaseOrderForm = () => {
           </TableBody>
         </Table>
       </TableContainer>
+
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={() => setOpenSnackbar(false)}
+        message={message}
+      />
     </>
   );
 };
