@@ -6,28 +6,26 @@ header("Access-Control-Allow-Headers: Content-Type");
 $servername = "localhost";
 $username = "root"; 
 $password = ""; 
-$database = "feedback_management"; // Updated database name for feedback
+$database = "feedback_management"; 
 
-// Create connection
+
 $conn = new mysqli($servername, $username, $password, $database);
 
-// Check connection
 if ($conn->connect_error) {
     die(json_encode(["status" => "error", "message" => "Connection failed: " . $conn->connect_error]));
 }
 
-// Read JSON data from request
 $data = json_decode(file_get_contents("php://input"), true);
 $method = $_SERVER["REQUEST_METHOD"];
 
 switch ($method) {
-    case "POST": // Create a new feedback
+    case "POST": 
         $customerName = $data["customerName"];
         $issueCategory = $data["issueCategory"];
         $complaintDetails = $data["complaintDetails"];
         $status = $data["status"];
         
-        // Set CreatedOn timestamp
+    
         $createdOn = date("Y-m-d H:i:s");
 
         $stmt = $conn->prepare("INSERT INTO feedbacks (customerName, issueCategory, complaintDetails, status, CreatedOn) 
@@ -42,7 +40,7 @@ switch ($method) {
         $stmt->close();
         break;
 
-    case "GET": // Fetch all feedbacks (excluding deleted ones, check if active)
+    case "GET":
         $sql = "SELECT * FROM feedbacks WHERE Is_Deleted = 0 AND Is_Active = 1";
         $result = $conn->query($sql);
         
@@ -53,14 +51,13 @@ switch ($method) {
         echo json_encode($feedbacks);
         break;
 
-    case "PUT": // Update feedback details
+    case "PUT": 
         $id = $data["id"];
         $customerName = $data["customerName"];
         $issueCategory = $data["issueCategory"];
         $complaintDetails = $data["complaintDetails"];
         $status = $data["status"];
         
-        // Update the ModifiedOn timestamp
         $modifiedOn = date("Y-m-d H:i:s");
 
         $stmt = $conn->prepare("UPDATE feedbacks SET customerName=?, issueCategory=?, complaintDetails=?, status=?, ModifiedOn=? WHERE id=?");
@@ -74,7 +71,7 @@ switch ($method) {
         $stmt->close();
         break;
 
-    case "DELETE": // Soft delete a feedback (set Is_Active to 0 and Is_Deleted to 1)
+    case "DELETE": 
         $id = $data["id"];
         $stmt = $conn->prepare("UPDATE feedbacks SET Is_Active = 0, Is_Deleted = 1 WHERE id=?");
         $stmt->bind_param("i", $id);
